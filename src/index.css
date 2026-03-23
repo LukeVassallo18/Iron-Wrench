@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  color-scheme: dark;
+
+  --font-title: 'Bebas Neue', 'Arial Narrow', sans-serif;
+  --font-mono: ui-monospace, 'IBM Plex Mono', SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+
+  --background: 0 0% 5.1%;
+  --foreground: 30 6% 90%;
+
+  --card: 0 0% 10.2%;
+  --card-foreground: 30 6% 90%;
+
+  --popover: 0 0% 10.2%;
+  --popover-foreground: 30 6% 90%;
+
+  --primary: 24.6 95.4% 53.1%;
+  --primary-foreground: 0 0% 5.1%;
+
+  --secondary: 0 0% 16.5%;
+  --secondary-foreground: 30 6% 90%;
+
+  --muted: 0 0% 16.5%;
+  --muted-foreground: 30 4% 64%;
+
+  --accent: 24.6 95.4% 53.1%;
+  --accent-foreground: 0 0% 5.1%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 0 0% 16.5%;
+  --input: 0 0% 16.5%;
+  --ring: 24.6 95.4% 53.1%;
+
+  --radius: 0.375rem;
+
+  --surface: 0 0% 10.2%;
+  --surface-border: 0 0% 16.5%;
+  --surface-hover: 0 0% 14%;
+
+  --amber-glow: 24.6 95.4% 53.1%;
+
+  /* Compatibility tokens for existing component CSS */
+  --color-bg: hsl(var(--background));
+  --color-surface: hsl(var(--surface));
+  --color-surface-alt: hsl(var(--card));
+  --color-text: hsl(var(--foreground));
+  --color-text-muted: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+  --color-accent: hsl(var(--accent));
+  --color-accent-strong: hsl(var(--primary));
+  --color-accent-soft: hsl(var(--accent) / 0.12);
+  --shadow-soft: 0 10px 30px hsl(0 0% 0% / 0.2);
+}
+
+.dark {
+  --background: 0 0% 5.1%;
+  --foreground: 30 6% 90%;
+}
+
+* {
+  box-sizing: border-box;
+  border-color: hsl(var(--border));
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-family: var(--font-title);
+}
+
+.section-container {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .section-container {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-container {
+    padding: 0 2rem;
+  }
+}
+
+.amber-glow-shadow {
+  box-shadow: 0 4px 20px -4px hsl(24.6 95.4% 53.1% / 0.25);
+}
+
+.grain-texture {
+  position: relative;
+}
+
+.grain-texture::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
