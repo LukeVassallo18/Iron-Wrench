@@ -1,13 +1,14 @@
-import './Navbar.css'
+import "./Navbar.css";
 
-const navItems = ['Services', 'About']
+const navItems = ["Services", "About"];
 
 function Navbar() {
   return (
     <header className="navbar">
       <div className="brand">
-        <div>
-          <p className="brand-title">Iron &amp; Wrench</p>
+        <div className="brand-content">
+          <img src="/Iron&WrenchLogo.png" alt="Iron & Wrench Logo" />
+          <span className="brand-title">Iron &amp; Wrench</span>
         </div>
       </div>
 
@@ -20,10 +21,11 @@ function Navbar() {
               </a>
             </li>
           ))}
+          <button className="book-now-btn">Book Now</button>
         </ul>
       </nav>
     </header>
-  )
+  );
 }
 
-export default Navbar
+export default Navbar;

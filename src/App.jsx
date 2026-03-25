@@ -1,6 +1,7 @@
-import './App.css'
-import HeroSection from './components/HeroSection/HeroSection'
-import Navbar from './components/Navbar/Navbar'
+import "./App.css";
+import HeroSection from "./components/HeroSection/HeroSection";
+import Navbar from "./components/Navbar/Navbar";
+import ServicesSection from "./components/ServicesSection/ServicesSection";
 
 function App() {
   return (
@@ -10,10 +11,11 @@ function App() {
 
         <section className="app-content">
           <HeroSection />
+          <ServicesSection />
         </section>
       </div>
     </main>
-  )
+  );
 }
 
-export default App
+export default App;

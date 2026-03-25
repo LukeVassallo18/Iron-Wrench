@@ -1,0 +1,16 @@
+.card-container{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.services-section{
+    margin-top: 5rem;
+    margin-bottom: 3rem;
+}
+
+.services-title{
+    font-size: 3rem;
+    color: var(--color-text);
+}
+
