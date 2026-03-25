@@ -1,4 +1,5 @@
 import "./App.css";
+import BookService from "./components/BookService/BookService";
 import BuiltBySection from "./components/BuiltBySection/BuiltBySection";
 import HeroSection from "./components/HeroSection/HeroSection";
 import Navbar from "./components/Navbar/Navbar";
@@ -14,6 +15,7 @@ function App() {
           <HeroSection />
           <ServicesSection />
           <BuiltBySection />
+          <BookService />
         </section>
       </div>
     </main>
