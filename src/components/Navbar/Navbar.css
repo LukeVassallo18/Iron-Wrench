@@ -1,8 +1,31 @@
+/* When at the top of the page no border bottom will show */
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding-bottom: 0.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: hsl(var(--background));
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease;
+
+}
+
+.navbar.scrolled {
+  border-bottom-color: hsl(var(--border));
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  padding: 0.45rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
 }
 
 .brand {
@@ -81,14 +104,52 @@
 }
 
 @media (max-width: 1024px) {
+  .mobile-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+  }
+
   .nav-right {
     display: none;
+    width: 100%;
+    margin: 0;
+    padding-top: 0.8rem;
+  }
+
+  .nav-right.open {
+    display: block;
+  }
+
+  .nav-list {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.35rem;
+  }
+
+  .nav-list li {
+    width: 100%;
+  }
+
+  .nav-link {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .book-now-btn {
+    width: 100%;
+    margin-top: 0.25rem;
+    padding: 0.8rem 1rem;
   }
 }
 
 @media (max-width: 800px) {
   .navbar {
-    padding-bottom: 0.1rem;
+    flex-wrap: wrap;
+    row-gap: 0.45rem;
+    padding-bottom: 0.3rem;
   }
 
   .brand-content img {

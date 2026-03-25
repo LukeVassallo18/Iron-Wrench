@@ -5,12 +5,19 @@
 }
 
 .services-section{
-    margin-top: 5rem;
-    margin-bottom: 3rem;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
 }
 
 .services-title{
-    font-size: 3rem;
+    font-size: 4rem;
+    font-weight: 500;
     color: var(--color-text);
+}
+
+@media (max-width: 768px) {
+    .card-container {
+        grid-template-columns: 1fr;
+    }
 }
 

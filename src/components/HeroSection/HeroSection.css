@@ -71,4 +71,7 @@
     max-width: 21rem;
     font-size: 1.75rem;
   }
+  .hero-actions {
+    justify-content: center;
+  }
 }
