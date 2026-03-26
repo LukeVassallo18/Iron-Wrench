@@ -1,184 +1,373 @@
-import { useState } from 'react';
-import './BookService.css';
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { db } from "../../firebase";
+import "./BookService.css";
 
-function BookService() {
-    const [currentStep, setCurrentStep] = useState(1);
-    const [formData, setFormData] = useState({
-        serviceType: '',
-        date: '',
-        timeSlot: '',
-        name: '',
-        phone: '',
-        email: '',
-        notes: '',
+const SERVICE_OPTIONS = [
+  { value: "tyre-wheel", label: "Tyre & Wheel Fitting", price: 50 },
+  { value: "brake-service", label: "Brake Service", price: 75 },
+  { value: "engine-diagnostics", label: "Engine Diagnostics", price: 100 },
+  { value: "oil-change", label: "Oil Change", price: 40 },
+  {
+    value: "chain-sprocket",
+    label: "Chain & Sprocket Replacement",
+    price: 120,
+  },
+  { value: "electrical-system", label: "Electrical System Repair", price: 80 },
+];
+
+const LABOUR_RATE = 0.2;
+const formatEuro = (value) => `€${value.toFixed(2)}`;
+
+const getService = (serviceValue) =>
+  SERVICE_OPTIONS.find((service) => service.value === serviceValue);
+
+const getServiceLabel = (serviceValue) => {
+  const found = getService(serviceValue);
+  return found?.label ?? serviceValue;
+};
+
+const getServicePrice = (serviceValue) => {
+  const found = getService(serviceValue);
+  return found?.price ?? 0;
+};
+
+function BookService({ currentUser }) {
+  const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [formData, setFormData] = useState({
+    serviceType: "",
+    services: [],
+    date: "",
+    timeSlot: "",
+    name: currentUser?.displayName ?? "",
+    phone: "",
+    email: currentUser?.email ?? "",
+    notes: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState("");
+
+  const subtotal = formData.services.reduce(
+    (total, serviceValue) => total + getServicePrice(serviceValue),
+    0,
+  );
+  const labourCost = subtotal * LABOUR_RATE;
+  const approximateTotal = subtotal + labourCost;
+
+  const updateField = (field) => (event) => {
+    setFormData((prev) => ({ ...prev, [field]: event.target.value }));
+  };
+
+  const addServiceToCart = () => {
+    if (!formData.serviceType) return;
+
+    setFormData((prev) => {
+      if (prev.services.includes(prev.serviceType)) {
+        return { ...prev, serviceType: "" };
+      }
+
+      return {
+        ...prev,
+        services: [...prev.services, prev.serviceType],
+        serviceType: "",
+      };
     });
+  };
 
-    const updateField = (field) => (event) => {
-        setFormData((prev) => ({ ...prev, [field]: event.target.value }));
-    };
+  const removeServiceFromCart = (serviceToRemove) => {
+    setFormData((prev) => ({
+      ...prev,
+      services: prev.services.filter((service) => service !== serviceToRemove),
+    }));
+  };
 
-    const goNext = () => setCurrentStep((prev) => Math.min(3, prev + 1));
-    const goBack = () => setCurrentStep((prev) => Math.max(1, prev - 1));
+  const goNext = () => setCurrentStep((prev) => Math.min(3, prev + 1));
+  const goBack = () => setCurrentStep((prev) => Math.max(1, prev - 1));
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-    };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    const dotClass = (stepNumber) => {
-        if (stepNumber < currentStep) return 'dot dot-complete';
-        if (stepNumber === currentStep) return 'dot';
-        return 'dot dot-inactive';
-    };
+    if (!db || !currentUser) {
+      setSubmitMessage("Booking is unavailable right now.");
+      return;
+    }
 
-    return (
-        <div className="book-service-container">
-            <h2 className="book-service-title">Book your Service</h2>
-            <div className="form-status-container">
-                <span className={dotClass(1)}>1</span>
-                <span className={dotClass(2)}>2</span>
-                <span className={dotClass(3)}>3</span>
-            </div>
+    setIsSubmitting(true);
+    setSubmitMessage("");
 
-            <div className="form-inputs">
-                <form className="book-form" onSubmit={handleSubmit}>
-                    {currentStep === 1 && (
-                        <>
-                            <label className="form-field form-field-full">
-                                Select Service
-                                <select
-                                    name="serviceType"
-                                    value={formData.serviceType}
-                                    onChange={updateField('serviceType')}
-                                >
-                                    <option value="">Choose a service...</option>
-                                    <option value="tyre-wheel">Tyre &amp; Wheel Fitting</option>
-                                    <option value="brake-service">Brake Service</option>
-                                    <option value="engine-diagnostics">Engine Diagnostics</option>
-                                    <option value="oil-change">Oil Change</option>
-                                    <option value="chain-sprocket">Chain &amp; Sprocket Replacement</option>
-                                    <option value="electrical-system">Electrical System Repair</option>
-                                </select>
-                            </label>
+    try {
+      await addDoc(collection(db, "bookings"), {
+        ...formData,
+        serviceType: formData.services[0] ?? "",
+        subtotal,
+        labourCost,
+        approximateTotal,
+        currency: "EUR",
+        userId: currentUser.uid,
+        userEmail: currentUser.email ?? "",
+        status: "pending",
+        createdAt: serverTimestamp(),
+      });
 
-                            <div className="form-actions form-actions-end">
-                                <button
-                                    type="button"
-                                    className="book-submit-btn"
-                                    onClick={goNext}
-                                    disabled={!formData.serviceType}
-                                >
-                                    Next
-                                </button>
-                            </div>
-                        </>
-                    )}
+      setSubmitMessage("Booking submitted successfully.");
+      setCurrentStep(1);
+      setFormData({
+        serviceType: "",
+        services: [],
+        date: "",
+        timeSlot: "",
+        name: currentUser?.displayName ?? "",
+        phone: "",
+        email: currentUser?.email ?? "",
+        notes: "",
+      });
 
-                    {currentStep === 2 && (
-                        <>
-                            <label className="form-field form-field-full">
-                                Date
-                                <input
-                                    type="date"
-                                    name="date"
-                                    value={formData.date}
-                                    onChange={updateField('date')}
-                                />
-                            </label>
+      navigate("/bookings");
+    } catch {
+      setSubmitMessage("Failed to submit booking. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-                            <label className="form-field form-field-full">
-                                Time Slot
-                                <select
-                                    name="timeSlot"
-                                    value={formData.timeSlot}
-                                    onChange={updateField('timeSlot')}
-                                >
-                                    <option value="">Choose a time...</option>
-                                    <option value="morning">Morning (8am–12pm)</option>
-                                    <option value="afternoon">Afternoon (12pm–4pm)</option>
-                                    <option value="evening">Evening (4pm–6pm)</option>
-                                </select>
-                            </label>
+  const dotClass = (stepNumber) => {
+    if (stepNumber < currentStep) return "dot dot-complete";
+    if (stepNumber === currentStep) return "dot";
+    return "dot dot-inactive";
+  };
 
-                            <div className="form-actions">
-                                <button type="button" className="book-back-btn" onClick={goBack}>
-                                    Back
-                                </button>
-                                <button
-                                    type="button"
-                                    className="book-submit-btn"
-                                    onClick={goNext}
-                                    disabled={!formData.date || !formData.timeSlot}
-                                >
-                                    Next
-                                </button>
-                            </div>
-                        </>
-                    )}
+  return (
+    <div className="book-service-container">
+      <h2 className="book-service-title">Book your Service</h2>
+      <div className="form-status-container">
+        <span className={dotClass(1)}>1</span>
+        <span className={dotClass(2)}>2</span>
+        <span className={dotClass(3)}>3</span>
+      </div>
 
-                    {currentStep === 3 && (
-                        <>
-                            <label className="form-field form-field-full">
-                                Name
-                                <input
-                                    type="text"
-                                    name="name"
-                                    placeholder="Your name"
-                                    value={formData.name}
-                                    onChange={updateField('name')}
-                                />
-                            </label>
+      <div className="form-inputs">
+        <form className="book-form" onSubmit={handleSubmit}>
+          {currentStep === 1 && (
+            <>
+              <label className="form-field form-field-full">
+                Select Service
+                <select
+                  name="serviceType"
+                  value={formData.serviceType}
+                  onChange={updateField("serviceType")}
+                >
+                  <option value="">Choose a service...</option>
+                  {SERVICE_OPTIONS.map((service) => (
+                    <option key={service.value} value={service.value}>
+                      {service.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-                            <label className="form-field form-field-full">
-                                Phone
-                                <input
-                                    type="tel"
-                                    name="phone"
-                                    placeholder="+353..."
-                                    value={formData.phone}
-                                    onChange={updateField('phone')}
-                                />
-                            </label>
+              <div className="service-cart-actions">
+                <button
+                  type="button"
+                  className="book-back-btn"
+                  onClick={addServiceToCart}
+                  disabled={!formData.serviceType}
+                >
+                  Add Service
+                </button>
+              </div>
 
-                            <label className="form-field form-field-full">
-                                Email
-                                <input
-                                    type="email"
-                                    name="email"
-                                    placeholder="you@email.com"
-                                    value={formData.email}
-                                    onChange={updateField('email')}
-                                />
-                            </label>
+              <div className="service-cart-list" aria-live="polite">
+                {formData.services.length === 0 ? (
+                  <p className="service-cart-empty">No services added yet.</p>
+                ) : (
+                  formData.services.map((service) => (
+                    <div key={service} className="service-cart-item">
+                      <span>
+                        {getServiceLabel(service)} ·{" "}
+                        {formatEuro(getServicePrice(service))}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => removeServiceFromCart(service)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
 
-                            <label className="form-field form-field-full">
-                                Notes (optional)
-                                <textarea
-                                    name="notes"
-                                    rows="4"
-                                    placeholder="Any details about your bike..."
-                                    value={formData.notes}
-                                    onChange={updateField('notes')}
-                                />
-                            </label>
+              {formData.services.length > 0 ? (
+                <div className="service-cost-summary">
+                  <p>
+                    <strong>Services subtotal:</strong> {formatEuro(subtotal)}
+                  </p>
+                  <p>
+                    <strong>
+                      Labour (approx. {Math.round(LABOUR_RATE * 100)}%):
+                    </strong>{" "}
+                    {formatEuro(labourCost)}
+                  </p>
+                  <p className="service-total-line">
+                    <strong>Approx. Total:</strong>{" "}
+                    {formatEuro(approximateTotal)}
+                  </p>
+                </div>
+              ) : null}
 
-                            <div className="form-actions">
-                                <button type="button" className="book-back-btn" onClick={goBack}>
-                                    Back
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="book-submit-btn"
-                                    disabled={!formData.name || !formData.phone || !formData.email}
-                                >
-                                    Confirm Booking
-                                </button>
-                            </div>
-                        </>
-                    )}
-                </form>
-            </div>
-        </div>
-    );
+              <div className="form-actions form-actions-end">
+                <button
+                  type="button"
+                  className="book-submit-btn"
+                  onClick={goNext}
+                  disabled={formData.services.length === 0}
+                >
+                  Next
+                </button>
+              </div>
+            </>
+          )}
+
+          {currentStep === 2 && (
+            <>
+              <label className="form-field form-field-full">
+                Date
+                <input
+                  type="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={updateField("date")}
+                />
+              </label>
+
+              <label className="form-field form-field-full">
+                Time Slot
+                <select
+                  name="timeSlot"
+                  value={formData.timeSlot}
+                  onChange={updateField("timeSlot")}
+                >
+                  <option value="">Choose a time...</option>
+                  <option value="morning">Morning (8am–12pm)</option>
+                  <option value="afternoon">Afternoon (12pm–4pm)</option>
+                  <option value="evening">Evening (4pm–6pm)</option>
+                </select>
+              </label>
+
+              <div className="form-actions">
+                <button
+                  type="button"
+                  className="book-back-btn"
+                  onClick={goBack}
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  className="book-submit-btn"
+                  onClick={goNext}
+                  disabled={!formData.date || !formData.timeSlot}
+                >
+                  Next
+                </button>
+              </div>
+            </>
+          )}
+
+          {currentStep === 3 && (
+            <>
+              <label className="form-field form-field-full">
+                Name
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Your name"
+                  value={formData.name}
+                  onChange={updateField("name")}
+                />
+              </label>
+
+              <label className="form-field form-field-full">
+                Phone
+                <input
+                  type="tel"
+                  name="phone"
+                  placeholder="+353..."
+                  value={formData.phone}
+                  onChange={updateField("phone")}
+                />
+              </label>
+
+              <label className="form-field form-field-full">
+                Email
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="you@email.com"
+                  value={formData.email}
+                  onChange={updateField("email")}
+                />
+              </label>
+
+              <label className="form-field form-field-full">
+                Notes (optional)
+                <textarea
+                  name="notes"
+                  rows="4"
+                  placeholder="Any details about your bike..."
+                  value={formData.notes}
+                  onChange={updateField("notes")}
+                />
+              </label>
+
+              <div className="form-actions">
+                <button
+                  type="button"
+                  className="book-back-btn"
+                  onClick={goBack}
+                >
+                  Back
+                </button>
+                <button
+                  type="submit"
+                  className="book-submit-btn"
+                  disabled={
+                    isSubmitting ||
+                    !formData.name ||
+                    !formData.phone ||
+                    !formData.email
+                  }
+                >
+                  {isSubmitting ? "Submitting..." : "Confirm Booking"}
+                </button>
+              </div>
+
+              <div className="service-cost-summary">
+                <p>
+                  <strong>Services subtotal:</strong> {formatEuro(subtotal)}
+                </p>
+                <p>
+                  <strong>
+                    Labour (approx. {Math.round(LABOUR_RATE * 100)}%):
+                  </strong>{" "}
+                  {formatEuro(labourCost)}
+                </p>
+                <p className="service-total-line">
+                  <strong>Approx. Total:</strong> {formatEuro(approximateTotal)}
+                </p>
+              </div>
+            </>
+          )}
+
+          {submitMessage ? (
+            <p className="book-submit-message">{submitMessage}</p>
+          ) : null}
+        </form>
+      </div>
+    </div>
+  );
 }
 
 export default BookService;

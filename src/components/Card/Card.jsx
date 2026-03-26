@@ -9,7 +9,7 @@ function Card({ title, description, price, Icon }) {
       <div className="right-section">
         <h3 className="card-title">{title}</h3>
         <p className="card-description">{description}</p>
-        <span className="card-price">${price}</span>
+        <span className="card-price">€{price}</span>
       </div>
     </div>
   );

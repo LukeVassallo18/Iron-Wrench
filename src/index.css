@@ -56,6 +56,48 @@
   --shadow-soft: 0 10px 30px hsl(0 0% 0% / 0.2);
 }
 
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --background: 30 14% 96%;
+  --foreground: 0 0% 10%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 10%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 10%;
+
+  --primary: 24.6 95.4% 45%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 0 0% 92%;
+  --secondary-foreground: 0 0% 10%;
+
+  --muted: 0 0% 93%;
+  --muted-foreground: 0 0% 38%;
+
+  --accent: 24.6 95.4% 45%;
+  --accent-foreground: 0 0% 100%;
+
+  --border: 0 0% 84%;
+  --input: 0 0% 84%;
+
+  --surface: 0 0% 100%;
+  --surface-border: 0 0% 84%;
+  --surface-hover: 0 0% 95%;
+
+  --color-bg: hsl(var(--background));
+  --color-surface: hsl(var(--surface));
+  --color-surface-alt: hsl(var(--card));
+  --color-text: hsl(var(--foreground));
+  --color-text-muted: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+  --color-accent: hsl(var(--accent));
+  --color-accent-strong: hsl(var(--primary));
+  --color-accent-soft: hsl(var(--accent) / 0.14);
+}
+
 .dark {
   --background: 0 0% 5.1%;
   --foreground: 30 6% 90%;
