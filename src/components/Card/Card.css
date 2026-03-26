@@ -1,6 +1,6 @@
 .card{
-    background-color: hsl(var(--card));
-    color: hsl(var(--card-foreground));
+    background-color: var(--card);
+    color: var(--card-foreground);
     border-radius: var(--radius);
     min-height: 150px;
     border: 1px solid var(--color-border);

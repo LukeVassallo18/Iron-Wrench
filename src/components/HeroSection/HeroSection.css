@@ -1,5 +1,13 @@
 .hero-section {
   width: 100%;
+  display: grid;
+  grid-template-columns: minmax(360px, 1fr) minmax(420px, 1.35fr);
+  gap: 2.2rem;
+  align-items: stretch;
+}
+
+.hero-copy {
+  min-width: 0;
 }
 
 .hero-title {
@@ -34,6 +42,11 @@
   gap: 1rem;
 }
 
+.hero-webgl-frame {
+  min-height: 540px;
+  overflow: hidden;
+}
+
 .btn-primary {
   border: 0;
   border-radius: 4px;
@@ -45,7 +58,7 @@
   font-family: var(--font-mono);
   padding: 1.05rem 2rem;
   cursor: pointer;
-  box-shadow: 0 8px 24px hsl(var(--accent) / 0.28);
+  box-shadow: 0 8px 24px rgba(255, 136, 27, 0.28);
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
@@ -54,10 +67,18 @@
   background: var(--color-accent-strong);
   transform: translateY(-2px);
   /* Optional: Add a stronger shadow on hover for more depth */
-  box-shadow: 0 12px 36px hsl(var(--accent) / 0.35);
+  box-shadow: 0 12px 36px rgba(255, 136, 27, 0.35);
 }
 
 @media (max-width: 900px) {
+  .hero-section {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-webgl-frame {
+    min-height: 360px;
+  }
+
   .hero-title {
     font-size: clamp(4rem, 21vw, 7rem);
   }

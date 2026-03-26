@@ -7,21 +7,21 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: hsl(var(--background));
+  background-color: var(--background);
   border-bottom: 1px solid transparent;
   transition: border-color 0.3s ease;
 
 }
 
 .navbar.scrolled {
-  border-bottom-color: hsl(var(--border));
+  border-bottom-color: var(--border);
 }
 
 .mobile-menu-btn {
   display: none;
   background: transparent;
   color: var(--color-text);
-  border: 1px solid hsl(var(--border));
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 0.45rem 0.75rem;
   font-family: var(--font-mono);
@@ -53,7 +53,7 @@
 }
 
 .book-now-btn{
-  background-color: hsl(var(--accent));
+  background-color: var(--accent);
   color: #111111;
   border: 0;
   border-radius: var(--radius);
@@ -62,7 +62,7 @@
   font-family: var(--font-mono);
   padding: 0.8rem 2rem;
   cursor: pointer;
-  box-shadow: 0 8px 24px hsl(var(--accent) / 0.28);
+  box-shadow: 0 8px 24px rgba(255, 136, 27, 0.28);
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
@@ -82,8 +82,8 @@
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  border: 1px solid hsl(var(--accent));
-  background: hsl(var(--accent));
+  border: 1px solid var(--accent);
+  background: var(--accent);
   color: #111;
   font-family: var(--font-mono);
   font-weight: 700;
