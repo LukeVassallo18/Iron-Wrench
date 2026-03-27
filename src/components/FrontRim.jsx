@@ -5,6 +5,8 @@ export default function FrontRim({
   position = [0, 0, 0],
   rotation = [0, 0, 0],
   scale = 3.2,
+  brakeDiscOffsetX = 0,
+  wheelSpin = 0,
 }) {
   const spokeCount = 3;
 
@@ -69,7 +71,7 @@ export default function FrontRim({
       -spokeTipWidth / 2 + spokeCurve * 0.55,
       spokeInnerRadius + spokeLength * 0.75,
       -spokeTipWidth / 2 + spokeCurve,
-      spokeOuterRadius
+      spokeOuterRadius,
     );
     shape.lineTo(spokeTipWidth / 2 + spokeCurve, spokeOuterRadius);
     shape.bezierCurveTo(
@@ -78,7 +80,7 @@ export default function FrontRim({
       spokeRootWidth / 2,
       spokeInnerRadius + spokeLength * 0.25,
       spokeRootWidth / 2,
-      spokeInnerRadius
+      spokeInnerRadius,
     );
     shape.closePath();
 
@@ -94,68 +96,61 @@ export default function FrontRim({
 
   return (
     <group position={position} rotation={rotation} scale={scale}>
-      
-      {/* 🛞 TYRE */}
-      <mesh castShadow receiveShadow>
-        <torusGeometry args={[0.41,0.05, 32, 160]} />
-        <meshStandardMaterial
-          color="#050505"
-          roughness={1}
-          metalness={0}
-          envMapIntensity={0.08}
-        />
-      </mesh>
+      <group rotation={[0, 0, wheelSpin]}>
+        {/* 🛞 TYRE */}
+        <mesh castShadow receiveShadow>
+          <torusGeometry args={[0.41, 0.05, 32, 160]} />
+          <meshStandardMaterial
+            color="#050505"
+            roughness={1}
+            metalness={0}
+            envMapIntensity={0.08}
+          />
+        </mesh>
 
-      {/* 🛞 RIM BARREL */}
-      <mesh castShadow receiveShadow>
-        <torusGeometry args={[rimRadius, rimThickness, 32, 140]} />
-        <meshStandardMaterial
-          color="#1a1a1a"
-          metalness={0.6}
-          roughness={0.35}
-        />
-      </mesh>
+        {/* 🛞 RIM BARREL */}
+        <mesh castShadow receiveShadow>
+          <torusGeometry args={[rimRadius, rimThickness, 32, 140]} />
+          <meshStandardMaterial
+            color="#1a1a1a"
+            metalness={0.6}
+            roughness={0.35}
+          />
+        </mesh>
 
-      {/* ⚙️ HUB */}
-      <mesh
-        rotation={[Math.PI / 2, 0, 0]}
-        castShadow
-        receiveShadow
-      >
-        <cylinderGeometry args={[hubRadius, hubRadius, hubWidth, 40]} />
-        <meshStandardMaterial
-          color="#222"
-          metalness={0.7}
-          roughness={0.3}
-        />
-      </mesh>
+        {/* ⚙️ HUB */}
+        <mesh rotation={[Math.PI / 2, 0, 0]} castShadow receiveShadow>
+          <cylinderGeometry args={[hubRadius, hubRadius, hubWidth, 40]} />
+          <meshStandardMaterial color="#222" metalness={0.7} roughness={0.3} />
+        </mesh>
 
-      {/* 🧩 SPOKES (CORRECT: 3 ONLY) */}
-      {spokes.map((angle, i) => (
-        <group key={i} rotation={[0, 0, angle]}>
-          <mesh position={[0, 0, -spokeDepth / 2]} castShadow receiveShadow>
-            <extrudeGeometry
-              args={[
-                spokeShape,
-                {
-                  depth: spokeDepth,
-                  bevelEnabled: false,
-                  curveSegments: 24,
-                },
-              ]}
-            />
-            <meshStandardMaterial
-              color="#0f0f0f"
-              metalness={0.65}
-              roughness={0.3}
-            />
-          </mesh>
-        </group>
-      ))}
+        {/* 🧩 SPOKES (CORRECT: 3 ONLY) */}
+        {spokes.map((angle, i) => (
+          <group key={i} rotation={[0, 0, angle]}>
+            <mesh position={[0, 0, -spokeDepth / 2]} castShadow receiveShadow>
+              <extrudeGeometry
+                args={[
+                  spokeShape,
+                  {
+                    depth: spokeDepth,
+                    bevelEnabled: false,
+                    curveSegments: 24,
+                  },
+                ]}
+              />
+              <meshStandardMaterial
+                color="#0f0f0f"
+                metalness={0.65}
+                roughness={0.3}
+              />
+            </mesh>
+          </group>
+        ))}
+      </group>
 
       {/* 🔩 OPTIONAL: BRAKE DISC (nice extra for marks) */}
       <mesh
-        position={[0, 0, 0.02 - brakeDiscThickness / 2]}
+        position={[brakeDiscOffsetX, 0, 0.02 - brakeDiscThickness / 2]}
         castShadow
         receiveShadow
       >
@@ -169,13 +164,8 @@ export default function FrontRim({
             },
           ]}
         />
-        <meshStandardMaterial
-          color="#888"
-          metalness={0.7}
-          roughness={0.4}
-        />
+        <meshStandardMaterial color="#888" metalness={0.7} roughness={0.4} />
       </mesh>
-
     </group>
   );
 }

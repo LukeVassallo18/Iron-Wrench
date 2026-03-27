@@ -6,11 +6,17 @@ export default function WebGLCameraRig({
   scrollProgress,
   focusPosition,
   baseTargetY,
+  zoomStart = 0.5,
+  zoomEnd = 1,
 }) {
   const { camera } = useThree();
 
   useEffect(() => {
-    const zoomProgress = THREE.MathUtils.smootherstep(scrollProgress, 0.5, 1);
+    const zoomProgress = THREE.MathUtils.smootherstep(
+      scrollProgress,
+      zoomStart,
+      zoomEnd,
+    );
     const target = new THREE.Vector3(
       THREE.MathUtils.lerp(0, focusPosition[0], zoomProgress),
       THREE.MathUtils.lerp(baseTargetY, focusPosition[1], zoomProgress),
@@ -24,7 +30,7 @@ export default function WebGLCameraRig({
     );
     camera.lookAt(target);
     camera.updateProjectionMatrix();
-  }, [baseTargetY, camera, focusPosition, scrollProgress]);
+  }, [baseTargetY, camera, focusPosition, scrollProgress, zoomEnd, zoomStart]);
 
   return null;
 }
