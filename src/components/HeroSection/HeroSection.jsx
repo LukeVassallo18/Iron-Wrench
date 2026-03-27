@@ -1,4 +1,3 @@
-import WebGLScene from "../WebGLScene";
 import "./HeroSection.css";
 
 function HeroSection() {
@@ -36,10 +35,6 @@ function HeroSection() {
             Book a service
           </button>
         </div>
-      </div>
-
-      <div className="hero-webgl-frame" aria-label="3D motorcycle preview">
-        <WebGLScene />
       </div>
     </div>
   );

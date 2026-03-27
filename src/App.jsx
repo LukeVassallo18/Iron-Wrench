@@ -10,6 +10,7 @@ import HeroSection from "./components/HeroSection/HeroSection";
 import Navbar from "./components/Navbar/Navbar";
 import ProfilePage from "./components/ProfilePage/ProfilePage";
 import ServicesSection from "./components/ServicesSection/ServicesSection";
+import WebGLScene from "./components/WebGLScene";
 import { auth } from "./firebase";
 
 const ADMIN_EMAILS = ["lukevas189@gmail.com", "admin@ex.com"];
@@ -17,29 +18,37 @@ const ADMIN_EMAILS = ["lukevas189@gmail.com", "admin@ex.com"];
 function HomePage({ currentUser, isAdmin, onSignOut }) {
   return (
     <main className="app-shell">
-      <div className="app-container">
+      <div className="app-container home-page">
         <Navbar
           currentUser={currentUser}
           isAdmin={isAdmin}
           onSignOut={onSignOut}
         />
 
-        <section className="app-content">
-          <section id="home">
-            <HeroSection />
-          </section>
-          <section id="services">
-            <ServicesSection />
-          </section>
-          <section id="about">
-            <BuiltBySection />
-          </section>
-          {!isAdmin ? (
-            <section id="book-service">
-              <BookService currentUser={currentUser} />
+        <div className="home-layout">
+          <section className="app-content-left">
+            <section id="home">
+              <HeroSection />
             </section>
-          ) : null}
-        </section>
+            <section id="services">
+              <ServicesSection />
+            </section>
+            <section id="about">
+              <BuiltBySection />
+            </section>
+            {!isAdmin ? (
+              <section id="book-service">
+                <BookService currentUser={currentUser} />
+              </section>
+            ) : null}
+          </section>
+          <div
+            className="hero-webgl-frame-right"
+            aria-label="3D motorcycle preview"
+          >
+            <WebGLScene />
+          </div>
+        </div>
       </div>
     </main>
   );

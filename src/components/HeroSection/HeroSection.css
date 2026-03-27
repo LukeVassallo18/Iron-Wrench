@@ -1,9 +1,6 @@
 .hero-section {
   width: 100%;
-  display: grid;
-  grid-template-columns: minmax(360px, 1fr) minmax(420px, 1.35fr);
-  gap: 2.2rem;
-  align-items: stretch;
+  display: block;
 }
 
 .hero-copy {
@@ -42,11 +39,6 @@
   gap: 1rem;
 }
 
-.hero-webgl-frame {
-  min-height: 540px;
-  overflow: hidden;
-}
-
 .btn-primary {
   border: 0;
   border-radius: 4px;
@@ -71,14 +63,6 @@
 }
 
 @media (max-width: 900px) {
-  .hero-section {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-webgl-frame {
-    min-height: 360px;
-  }
-
   .hero-title {
     font-size: clamp(4rem, 21vw, 7rem);
   }
