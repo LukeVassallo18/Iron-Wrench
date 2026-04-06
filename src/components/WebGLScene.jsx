@@ -1,28 +1,49 @@
 import { Canvas } from "@react-three/fiber";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import R6ModelScene from "./R6ModelScene";
 
 export default function WebGLScene() {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const rafRef = useRef(0);
+  const lastProgressRef = useRef(0);
 
   useEffect(() => {
-    const updateScrollProgress = () => {
+    const computeProgress = () => {
       const maxScroll = Math.max(
         document.documentElement.scrollHeight - window.innerHeight,
         1,
       );
 
-      setScrollProgress(
-        THREE.MathUtils.clamp(window.scrollY / maxScroll, 0, 1),
-      );
+      return THREE.MathUtils.clamp(window.scrollY / maxScroll, 0, 1);
     };
 
-    updateScrollProgress();
+    const updateScrollProgress = () => {
+      if (rafRef.current) return;
+
+      rafRef.current = window.requestAnimationFrame(() => {
+        rafRef.current = 0;
+        const nextProgress = computeProgress();
+
+        if (Math.abs(nextProgress - lastProgressRef.current) < 0.001) {
+          return;
+        }
+
+        lastProgressRef.current = nextProgress;
+        setScrollProgress(nextProgress);
+      });
+    };
+
+    const initialProgress = computeProgress();
+    lastProgressRef.current = initialProgress;
+    setScrollProgress(initialProgress);
     window.addEventListener("scroll", updateScrollProgress, { passive: true });
     window.addEventListener("resize", updateScrollProgress);
 
     return () => {
+      if (rafRef.current) {
+        window.cancelAnimationFrame(rafRef.current);
+      }
       window.removeEventListener("scroll", updateScrollProgress);
       window.removeEventListener("resize", updateScrollProgress);
     };
@@ -31,7 +52,8 @@ export default function WebGLScene() {
   return (
     <Canvas
       camera={{ position: [0, 1.6, 15], fov: 38 }}
-      gl={{ alpha: true }}
+      gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
+      dpr={[1, 2]}
       shadows
     >
       <directionalLight

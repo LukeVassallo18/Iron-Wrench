@@ -30,6 +30,32 @@ export default function FrontRim({
   const brakeDiscInnerRadius = 0.075;
   const brakeDiscThickness = 0.014;
 
+  const tyreArgs = useMemo(() => [0.41, 0.05, 32, 160], []);
+  const rimBarrelArgs = useMemo(
+    () => [rimRadius, rimThickness, 32, 140],
+    [rimRadius, rimThickness],
+  );
+  const hubArgs = useMemo(
+    () => [hubRadius, hubRadius, hubWidth, 40],
+    [hubRadius, hubWidth],
+  );
+  const spokeExtrudeSettings = useMemo(
+    () => ({
+      depth: spokeDepth,
+      bevelEnabled: false,
+      curveSegments: 24,
+    }),
+    [spokeDepth],
+  );
+  const brakeDiscExtrudeSettings = useMemo(
+    () => ({
+      depth: brakeDiscThickness,
+      bevelEnabled: false,
+      curveSegments: 48,
+    }),
+    [brakeDiscThickness],
+  );
+
   // --- SPOKE ANGLES ---
   const spokes = useMemo(() => {
     return Array.from({ length: spokeCount }, (_, i) => {
@@ -99,7 +125,7 @@ export default function FrontRim({
       <group rotation={[0, 0, wheelSpin]}>
         {/* 🛞 TYRE */}
         <mesh castShadow receiveShadow>
-          <torusGeometry args={[0.41, 0.05, 32, 160]} />
+          <torusGeometry args={tyreArgs} />
           <meshStandardMaterial
             color="#050505"
             roughness={1}
@@ -110,7 +136,7 @@ export default function FrontRim({
 
         {/* 🛞 RIM BARREL */}
         <mesh castShadow receiveShadow>
-          <torusGeometry args={[rimRadius, rimThickness, 32, 140]} />
+          <torusGeometry args={rimBarrelArgs} />
           <meshStandardMaterial
             color="#1a1a1a"
             metalness={0.6}
@@ -120,7 +146,7 @@ export default function FrontRim({
 
         {/* ⚙️ HUB */}
         <mesh rotation={[Math.PI / 2, 0, 0]} castShadow receiveShadow>
-          <cylinderGeometry args={[hubRadius, hubRadius, hubWidth, 40]} />
+          <cylinderGeometry args={hubArgs} />
           <meshStandardMaterial color="#222" metalness={0.7} roughness={0.3} />
         </mesh>
 
@@ -128,16 +154,7 @@ export default function FrontRim({
         {spokes.map((angle, i) => (
           <group key={i} rotation={[0, 0, angle]}>
             <mesh position={[0, 0, -spokeDepth / 2]} castShadow receiveShadow>
-              <extrudeGeometry
-                args={[
-                  spokeShape,
-                  {
-                    depth: spokeDepth,
-                    bevelEnabled: false,
-                    curveSegments: 24,
-                  },
-                ]}
-              />
+              <extrudeGeometry args={[spokeShape, spokeExtrudeSettings]} />
               <meshStandardMaterial
                 color="#0f0f0f"
                 metalness={0.65}
@@ -154,16 +171,7 @@ export default function FrontRim({
         castShadow
         receiveShadow
       >
-        <extrudeGeometry
-          args={[
-            brakeDiscShape,
-            {
-              depth: brakeDiscThickness,
-              bevelEnabled: false,
-              curveSegments: 48,
-            },
-          ]}
-        />
+        <extrudeGeometry args={[brakeDiscShape, brakeDiscExtrudeSettings]} />
         <meshStandardMaterial color="#888" metalness={0.7} roughness={0.4} />
       </mesh>
     </group>
