@@ -164,11 +164,15 @@
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 880px) {
   .nav-right {
     position: relative;
-    --wrench-track-width: 86px;
+    --wrench-track-width: 159px;
     --wrench-track-gap: 0.55rem;
+  }
+
+  .book-now-btn {
+    display: none;
   }
 
   .mobile-menu-btn {
@@ -220,20 +224,16 @@
   }
 
   .nav-action-btn {
-    width: calc(100% - var(--wrench-track-width) - var(--wrench-track-gap));
     margin-top: 0.25rem;
     padding: 0.8rem 1rem;
   }
 
   .profile-circle-btn {
-    width: calc(100% - var(--wrench-track-width) - var(--wrench-track-gap));
-    height: 44px;
-    border-radius: var(--radius);
-    margin-top: 0.25rem;
+    display: none;
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 880px) {
   .navbar {
     flex-wrap: wrap;
     row-gap: 0.45rem;

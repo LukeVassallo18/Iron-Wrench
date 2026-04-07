@@ -62,6 +62,7 @@ function Wrench({ isOpen }) {
 
     const targetY = isOpen ? 0.7 : 2.0
     const targetRotation = isOpen ? -0.78 : 0.4
+    const hasDropped = Math.abs(wrenchRef.current.position.y - targetY) < 0.03;
 
     wrenchRef.current.position.y = THREE.MathUtils.damp(
       wrenchRef.current.position.y,
@@ -76,6 +77,19 @@ function Wrench({ isOpen }) {
       7,
       delta,
     )
+
+    if (isOpen && hasDropped) {
+      // Horizontal spin after drop-in completes.
+      wrenchRef.current.rotation.y += delta * 2.2;
+    } else {
+      // Reset spin when closed/opening.
+      wrenchRef.current.rotation.y = THREE.MathUtils.damp(
+        wrenchRef.current.rotation.y,
+        0,
+        8,
+        delta,
+      );
+    }
   })
 
   return (
