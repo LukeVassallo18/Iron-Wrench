@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import MobileWrenchAnimation from "./MobileWrenchAnimation";
 import "./Navbar.css";
+
+const MobileWrenchAnimation = lazy(() => import("./MobileWrenchAnimation"));
 
 function Navbar({ currentUser, isAdmin, onSignOut }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -105,7 +106,9 @@ function Navbar({ currentUser, isAdmin, onSignOut }) {
         aria-label="Primary"
       >
         <div className="mobile-wrench-track" aria-hidden="true">
-          <MobileWrenchAnimation isOpen={isMenuOpen} />
+          <Suspense fallback={null}>
+            <MobileWrenchAnimation isOpen={isMenuOpen} />
+          </Suspense>
         </div>
 
         <ul className="nav-list">

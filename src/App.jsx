@@ -1,5 +1,5 @@
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import AuthPage from "./components/Auth/AuthPage";
@@ -10,8 +10,9 @@ import HeroSection from "./components/HeroSection/HeroSection";
 import Navbar from "./components/Navbar/Navbar";
 import ProfilePage from "./components/ProfilePage/ProfilePage";
 import ServicesSection from "./components/ServicesSection/ServicesSection";
-import WebGLScene from "./components/WebGLScene";
 import { auth } from "./firebase";
+
+const WebGLScene = lazy(() => import("./components/WebGLScene"));
 
 const ADMIN_EMAILS = ["lukevas189@gmail.com", "admin@ex.com"];
 
@@ -46,7 +47,13 @@ function HomePage({ currentUser, isAdmin, onSignOut }) {
             className="hero-webgl-frame-right"
             aria-label="3D motorcycle preview"
           >
-            <WebGLScene />
+            <Suspense
+              fallback={
+                <div className="hero-webgl-loading">Loading 3D scene…</div>
+              }
+            >
+              <WebGLScene />
+            </Suspense>
           </div>
         </div>
       </div>
