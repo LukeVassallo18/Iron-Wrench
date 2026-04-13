@@ -19,6 +19,8 @@ const SERVICE_OPTIONS = [
 
 const LABOUR_RATE = 0.2;
 const formatEuro = (value) => `€${value.toFixed(2)}`;
+const NAME_REGEX = /^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const getService = (serviceValue) =>
   SERVICE_OPTIONS.find((service) => service.value === serviceValue);
@@ -48,6 +50,7 @@ function BookService({ currentUser }) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
+  const [validationErrors, setValidationErrors] = useState({});
 
   const subtotal = formData.services.reduce(
     (total, serviceValue) => total + getServicePrice(serviceValue),
@@ -57,7 +60,50 @@ function BookService({ currentUser }) {
   const approximateTotal = subtotal + labourCost;
 
   const updateField = (field) => (event) => {
-    setFormData((prev) => ({ ...prev, [field]: event.target.value }));
+    const value =
+      field === "phone"
+        ? event.target.value.replace(/\D+/g, "")
+        : event.target.value;
+
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
+    if (validationErrors[field]) {
+      setValidationErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    }
+  };
+
+  const validateStepThree = () => {
+    const nextErrors = {};
+
+    const trimmedName = formData.name.trim();
+    const trimmedEmail = formData.email.trim();
+    const trimmedPhone = formData.phone.trim();
+
+    if (!trimmedName) {
+      nextErrors.name = "Name is required.";
+    } else if (!NAME_REGEX.test(trimmedName)) {
+      nextErrors.name =
+        "Name can only contain letters, spaces, apostrophes, and hyphens.";
+    }
+
+    if (!trimmedPhone) {
+      nextErrors.phone = "Phone number is required.";
+    } else if (!/^\d{7,15}$/.test(trimmedPhone)) {
+      nextErrors.phone = "Phone number must contain 7 to 15 digits only.";
+    }
+
+    if (!trimmedEmail) {
+      nextErrors.email = "Email is required.";
+    } else if (!EMAIL_REGEX.test(trimmedEmail)) {
+      nextErrors.email = "Enter a valid email address.";
+    }
+
+    setValidationErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
   };
 
   const addServiceToCart = () => {
@@ -88,6 +134,11 @@ function BookService({ currentUser }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (!validateStepThree()) {
+      setSubmitMessage("Please fix the highlighted fields.");
+      return;
+    }
 
     if (!db || !currentUser) {
       setSubmitMessage("Booking is unavailable right now.");
@@ -286,7 +337,11 @@ function BookService({ currentUser }) {
                   placeholder="Your name"
                   value={formData.name}
                   onChange={updateField("name")}
+                  aria-invalid={Boolean(validationErrors.name)}
                 />
+                {validationErrors.name ? (
+                  <span className="field-error">{validationErrors.name}</span>
+                ) : null}
               </label>
 
               <label className="form-field form-field-full">
@@ -297,7 +352,13 @@ function BookService({ currentUser }) {
                   placeholder="+353..."
                   value={formData.phone}
                   onChange={updateField("phone")}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  aria-invalid={Boolean(validationErrors.phone)}
                 />
+                {validationErrors.phone ? (
+                  <span className="field-error">{validationErrors.phone}</span>
+                ) : null}
               </label>
 
               <label className="form-field form-field-full">
@@ -308,7 +369,11 @@ function BookService({ currentUser }) {
                   placeholder="you@email.com"
                   value={formData.email}
                   onChange={updateField("email")}
+                  aria-invalid={Boolean(validationErrors.email)}
                 />
+                {validationErrors.email ? (
+                  <span className="field-error">{validationErrors.email}</span>
+                ) : null}
               </label>
 
               <label className="form-field form-field-full">

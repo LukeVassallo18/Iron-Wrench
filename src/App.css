@@ -61,7 +61,7 @@
   outline: 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .app-container {
     width: min(1200px, 100% - 2rem);
     padding: 1rem 0 1.5rem;
@@ -78,5 +78,6 @@
   .hero-webgl-frame-right {
     position: static;
     min-height: 360px;
+    height: 420px;
   }
 }

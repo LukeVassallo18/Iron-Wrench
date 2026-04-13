@@ -93,6 +93,19 @@
     min-height: 140px;
 }
 
+.form-field input[aria-invalid="true"],
+.form-field select[aria-invalid="true"],
+.form-field textarea[aria-invalid="true"] {
+    border-color: #e26666;
+}
+
+.field-error {
+    color: #ff9a9a;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    line-height: 1.25;
+}
+
 .form-field-full {
     width: 100%;
 }
