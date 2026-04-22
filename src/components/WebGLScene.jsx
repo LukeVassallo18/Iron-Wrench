@@ -64,7 +64,7 @@ export default function WebGLScene() {
       window.removeEventListener("resize", updateScrollProgress);
       window.removeEventListener("resize", updateViewportClass);
     };
-  };, []);
+  }, []);
 
   // lower dpr and shadows on compact mode to keep frame times stable.
   const canvasDpr = isCompactViewport ? [1, 1.2] : [1, 2];
