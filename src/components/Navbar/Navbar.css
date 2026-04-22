@@ -115,6 +115,13 @@
   display: none;
 }
 
+.mobile-wrench-track canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  background: transparent !important;
+}
+
 .nav-list {
   display: flex;
   align-items: center;

@@ -107,7 +107,7 @@ function Navbar({ currentUser, isAdmin, onSignOut }) {
       >
         <div className="mobile-wrench-track" aria-hidden="true">
           <Suspense fallback={null}>
-            <MobileWrenchAnimation isOpen={isMenuOpen} />
+            {isMenuOpen ? <MobileWrenchAnimation isOpen={isMenuOpen} /> : null}
           </Suspense>
         </div>
 
